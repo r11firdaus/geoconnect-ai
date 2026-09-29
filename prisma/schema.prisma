@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+}
+
+// Tambahkan di bawah model User
+model Space {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float    // Menggunakan Float agar mudah dikirim (serialize) ke Client Component
+  latitude    Float
+  longitude   Float
+  createdAt   DateTime @default(now())
+
+  // Optimasi Database: Indexing koordinat akan membuat pencarian map sangat cepat
+  @@index([latitude, longitude]) 
+}
