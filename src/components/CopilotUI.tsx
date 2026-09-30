@@ -38,11 +38,7 @@ type Filters = {
 //   }}
 // />
 //
-export default function CopilotUI({
-  onFilterChange,
-}: {
-  onFilterChange: (filters: Filters) => void;
-}) {
+export default function CopilotUI({onFilterChange}: { onFilterChange: (filters: Filters) => void;}) {
 
   // ============================================================
   // STATE INPUT
@@ -65,10 +61,10 @@ export default function CopilotUI({
   // - pesan user
   // - pesan assistant
   // - bagian/tool yang digunakan assistant
+
   // `sendMessage`
   // ----------------
-  // Digunakan untuk mengirim pesan baru ke AI.
-  // Pada versi AI SDK yang baru, kita menggunakan:
+  // Digunakan untuk mengirim pesan baru ke AI. Pada versi AI SDK yang baru, kita menggunakan:
   // sendMessage({
   //   text: input
   // });
@@ -96,17 +92,12 @@ export default function CopilotUI({
     const lastMessage = messages[messages.length - 1];
   // Jika tidak ada pesan terakhir, tidak ada yang perlu diproses.
     
-    if (!lastMessage) {
-      return;
-    }
+    if (!lastMessage) return;
 
   // Kita hanya tertarik pada pesan dari AI/assistant.
-    
   // Jangan memproses pesan user karena user tidak menjalankan tool `searchSpaces`.
     
-    if (lastMessage.role !== 'assistant') {
-      return;
-    }
+    if (lastMessage.role !== 'assistant') return;
 
 
   // ==========================================================
@@ -123,9 +114,7 @@ export default function CopilotUI({
   // - dll.
   // Karena itu kita mencari part khusus untuk tool:
   // `searchSpaces`.
-        const searchTool = lastMessage.parts.find(
-      (part) => part.type === 'tool-searchSpaces'
-    );
+    const searchTool = lastMessage.parts.find((part) => part.type === 'tool-searchSpaces');
 
 
   // ==========================================================
@@ -167,39 +156,32 @@ export default function CopilotUI({
   // HANDLE SUBMIT
   // ============================================================
   // Function ini dipanggil ketika user menekan tombol "Kirim" atau menekan Enter pada form.
-    const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
-  // Mencegah browser melakukan reload halaman ketika form disubmit secara normal.
-        e.preventDefault();
-  // Jangan kirim pesan kosong.
+      // Mencegah browser melakukan reload halaman ketika form disubmit secara normal.
+      e.preventDefault();
 
-  // `.trim()` menghapus spasi di awal/akhir. Contoh:
-  // "     " akan dianggap kosong.
-    if (!input.trim()) {
-      return;
-    }
-
+      // Jangan kirim pesan kosong. trim() menghapus spasi di awal/akhir. Contoh:
+      // "     " akan dianggap kosong.
+      if (!input.trim()) return;
+    
 
   // ==========================================================
   // KIRIM PESAN KE AI
   // ==========================================================
-  // AI SDK versi terbaru menggunakan `sendMessage()`.
-  // `text` berisi pesan yang diketik user. Contoh:
+  // AI SDK versi terbaru menggunakan sendMessage().text berisi pesan yang diketik user. Contoh:
   // input = "Cari coworking space di bawah 300 ribu"
   
   // maka:
   // sendMessage({
   //   text: "Cari coworking space di bawah 300 ribu"
   // });
-        await sendMessage({
+    await sendMessage({
       text: input,
     });
 
-
   // Setelah pesan berhasil dikirim, kosongkan input agar siap digunakan kembali.
-        setInput('');
+    setInput('');
   };
 
 
@@ -250,19 +232,13 @@ export default function CopilotUI({
             - assistant
         */}
         {messages.map((message) => (
-
           <div
             key={message.id}
 
-    // Jika pesan berasal dari user, posisikan di sebelah kanan.
-    // Jika pesan berasal dari assistant, posisikan di sebelah kiri.
-            className={`flex ${
-              message.role === 'user'
-                ? 'justify-end'
-                : 'justify-start'
-            }`}
+            // Jika pesan berasal dari user, posisikan di sebelah kanan.
+            // Jika pesan berasal dari assistant, posisikan di sebelah kiri.
+            className={`flex ${ message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-
 
             {/* ==================================================
                 CONTAINER PESAN
@@ -304,45 +280,35 @@ export default function CopilotUI({
                   Karena jenis part berbeda-beda, kita harus memeriksa `part.type`.
               */}
               {message.parts.map((part, index) => {
-
-
-        // =================================================
-        // TEXT PART
-        // =================================================
-        // Jika part adalah text biasa, tampilkan text tersebut. Contoh:
-        // {
-        //   type: "text",
-        //   text: "Saya akan mencari coworking space..."
-        // }
+                // =================================================
+                // TEXT PART
+                // =================================================
+                // Jika part adalah text biasa, tampilkan text tersebut. Contoh:
+                // {
+                //   type: "text",
+                //   text: "Saya akan mencari coworking space..."
+                // }
                 if (part.type === 'text') {
-                  return (
-                    <span key={index}>
-                      {part.text}
-                    </span>
-                  );
+                  return <span key={index}>{part.text}</span>
                 }
 
-
-        // =================================================
-        // SEARCH SPACES TOOL
-        // =================================================
-        // Ini adalah tool yang kita definisikan di server. Misalnya di server:
-        // tools: {
-        //   searchSpaces: tool({
-        //     ...
-        //   })
-        // }
-        // Maka pada client AI SDK akan mengenalinya sebagai:
-        // part.type === 'tool-searchSpaces'
+                // =================================================
+                // SEARCH SPACES TOOL
+                // =================================================
+                // Ini adalah tool yang kita definisikan di server. Misalnya di server:
+                // tools: {
+                //   searchSpaces: tool({
+                //     ...
+                //   })
+                // }
+                // Maka pada client AI SDK akan mengenalinya sebagai:
+                // part.type === 'tool-searchSpaces'
                 if (part.type === 'tool-searchSpaces') {
-
                   return (
                     <div
                       key={index}
                       className="mt-2 bg-green-50 text-green-700 text-xs p-2 rounded border border-green-200"
                     >
-
-
                       {/* ==========================================
                           TOOL SEDANG MENERIMA INPUT
                           ==========================================
