@@ -1,6 +1,6 @@
 // src/app/api/chat/route.ts
 import { google } from '@ai-sdk/google';
-import { streamText, tool } from 'ai';
+import { stepCountIs, streamText, tool } from 'ai';
 import { z } from 'zod'; // Zod sudah terinstal bawaan dari 'ai'
 
 export const maxDuration = 30; // Batas waktu eksekusi Vercel (penting untuk API AI)
@@ -8,7 +8,7 @@ export const maxDuration = 30; // Batas waktu eksekusi Vercel (penting untuk API
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const result = await streamText({
+  const result = streamText({
     model: google('gemini-3.8-flash'), // Model terbaru, sangat cepat & mendukung tool calling
     messages,
     system: `Anda adalah AI Copilot untuk platform GeoConnect.
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       searchSpaces: tool({
         description: 'Mengekstrak kriteria pencarian dari input user untuk memfilter database',
         // Zod memaksa Gemini untuk mematuhi struktur data (skema) yang kita inginkan
-        parameters: z.object({
+        inputSchema: z.object({
           maxPrice: z.number().optional().describe('Harga maksimal yang bersedia dibayar user'),
           keyword: z.string().optional().describe('Kata kunci lokasi, nama, atau fasilitas'),
         }),
@@ -41,8 +41,8 @@ export async function POST(req: Request) {
       }),
     },
     // Mengizinkan AI untuk memberikan teks biasa, atau memanggil tool, atau keduanya
-    maxSteps: 5, 
+    stopWhen: stepCountIs(5), 
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
