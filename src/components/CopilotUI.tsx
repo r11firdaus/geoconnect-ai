@@ -8,22 +8,13 @@
 // Pada AI SDK versi terbaru, useChat tidak lagi diambil dari 'ai/react'.
 // Gunakan package React khusus dari AI SDK:
 import { useChat } from '@ai-sdk/react';
-
 import { useEffect, useState } from 'react';
 
-
 // Tipe sederhana untuk filter yang akan dikirim ke parent.
-
 type Filters = {
-  // [key: string]: any;
-  title:       string;
-  description: string;
-  price:       number;
-  latitude:    number;
-  longitude:   number;
-  createdAt:   string;
+  maxPrice: number;
+  keyword: string;
 };
-
 
 // Komponen CopilotUI menerima function `onFilterChange` dari parent.
 //
@@ -446,14 +437,13 @@ export default function CopilotUI({onFilterChange}: { onFilterChange: (filters: 
         */}
         <input
           value={input}
-
           onChange={(e) => {
             setInput(e.target.value);
           }}
 
           placeholder="Tanya asisten AI..."
 
-          className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-800"
     />
 
 

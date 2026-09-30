@@ -1,6 +1,6 @@
 // src/app/api/chat/route.ts
 import { google } from '@ai-sdk/google';
-import { stepCountIs, streamText, tool } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText, tool } from 'ai';
 import { z } from 'zod'; // Zod sudah terinstal bawaan dari 'ai'
 
 export const maxDuration = 30; // Batas waktu eksekusi Vercel (penting untuk API AI)
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: google('gemini-3.8-flash'), // Model terbaru, sangat cepat & mendukung tool calling
-    messages,
+    messages: await convertToModelMessages(messages),
     system: `Anda adalah AI Copilot untuk platform GeoConnect.
     Tugas Anda adalah membantu user mencari coworking space atau properti.
     Jika user memberikan kriteria pencarian (harga, kata kunci), gunakan tool 'searchSpaces'.
