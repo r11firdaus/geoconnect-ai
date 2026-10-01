@@ -9,23 +9,38 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   name      String?
-  role      String   @default("USER")
-  createdAt DateTime @default(now())
+  role      String    @default("USER")
+  createdAt DateTime  @default(now())
+  messages  Message[]
 }
 
 // Tambahkan di bawah model User
 model Space {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String
-  price       Float    // Menggunakan Float agar mudah dikirim (serialize) ke Client Component
+  price       Float // Menggunakan Float agar mudah dikirim (serialize) ke Client Component
   latitude    Float
   longitude   Float
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  messages    Message[]
 
   // Optimasi Database: Indexing koordinat akan membuat pencarian map sangat cepat
-  @@index([latitude, longitude]) 
+  @@index([latitude, longitude])
+}
+
+model Message {
+  id      String @id @default(uuid())
+  content String
+
+  spaceId String
+  space   Space  @relation(fields: [spaceId], references: [id])
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
+
+  createdAt DateTime @default(now())
 }
