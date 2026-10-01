@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import CopilotUI from '@/components/CopilotUI';
 import MapUI from '@/components/MapUi';
+import LiveChat from '@/components/LiveChat';
 
 type Filters = {
   maxPrice: number;
@@ -57,6 +58,13 @@ export default function Home() {
           {/* Kolom Peta (2/3 layar) */}
           <div className="lg:col-span-2">
              <MapUI spaces={spaces} />
+          </div>
+          <div className="lg:col-span-3 mt-8">
+            <h2 className="text-2xl font-semibold mb-4">Live Chat</h2>
+            <div className="border rounded-xl overflow-hidden">
+              {/* sementara manual dulu ID nya karena belum ada autentikasi */}
+              <LiveChat spaceId="66ea876a-f9b8-4d7e-a070-ed116ec4f3cf" currentUserId="d36f8a9d-ea11-4f81-a2e4-d9e9c90e7c82" /> 
+            </div>
           </div>
         </div>
       </div>
